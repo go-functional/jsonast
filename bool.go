@@ -26,12 +26,12 @@ func newBool(v *value) (Bool, error) {
 	if !isBool(v.cur) {
 		return nil, errNotABool
 	}
-	return &boolImpl{
+	return boolImpl{
 		Value: v,
 		val:   v.cur.(bool),
 	}, nil
 }
 
-func (b *boolImpl) True() bool {
+func (b boolImpl) True() bool {
 	return b.val
 }
