@@ -2,12 +2,6 @@ package jsonast
 
 import (
 	"encoding/json"
-	"errors"
-)
-
-var (
-	errNotANumber  = errors.New("not a number")
-	errNotAnObject = errors.New("not an object")
 )
 
 // Value is a generic node in a JSON AST. This implements fmt.Stringer
@@ -65,8 +59,11 @@ func ValueFromBytes(b []byte) (Value, error) {
 }
 
 func valueFromIface(i interface{}) (Value, error) {
-	// TODO: more checks here!
-	return Value(i), nil
+	b, err := json.Marshal(i)
+	if err != nil {
+		return nil, err
+	}
+	return &value{b: b, cur: i}, nil
 }
 
 func (v *value) Bytes() []byte {
@@ -101,7 +98,7 @@ func (v *value) BoolVal() (Bool, error) {
 	if !v.IsBool() {
 		return nil, errNotABool
 	}
-	return newBool(v.cur.(bool)), nil
+	return newBool(v.cur), nil
 }
 
 func (v *value) IsObject() bool {
@@ -113,7 +110,7 @@ func (v *value) ObjectVal() (Object, error) {
 	if !v.IsObject() {
 		return nil, errNotAnObject
 	}
-	return newObject(v.cur.(map[interface{}]interface{})), nil
+	return newObject(v)
 }
 
 func (v *value) IsArray() bool {
@@ -124,7 +121,7 @@ func (v *value) ArrayVal() (Array, error) {
 	if !v.IsArray() {
 		return nil, errNotAnArray
 	}
-	return newArray(v), nil
+	return newArray(v)
 }
 
 func (v *value) IsNull() bool {
