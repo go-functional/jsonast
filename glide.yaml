@@ -1,0 +1,3 @@
+package: github.com/go-functional/jsonast
+import:
+- package: github.com/arschles/assert
