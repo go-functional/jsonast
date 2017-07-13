@@ -28,3 +28,17 @@ func newString(str string) String {
 		str:   str,
 	}
 }
+
+func appendStringToValue(v Value, s string) (Value, error) {
+	switch x := v.(type) {
+	case stringImpl:
+		x.str += s
+		return x, nil
+	default:
+		return nil, fmt.Errorf("trying to append a string to a %#v", v)
+	}
+}
+
+// func stringParser() (parsePattern, bool) {
+// 	return newParsePattern(quoteToken, zeroOrMore(charToken), quoteToken)
+// }
