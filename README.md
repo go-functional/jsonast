@@ -3,6 +3,11 @@
 This repository is dedicated to parsing a JSON string into an 
 abstract syntax tree (AST).
 
+Based on the following Scala libraries:
+
+- [lift-json](https://github.com/lift/lift/tree/master/framework/lift-base/lift-json)
+- [lift-json-scalaz](https://github.com/lift/framework/tree/master/core/json-scalaz)
+
 Beware: it is pre-alpha and a major work in progress!
 
 # Example Usage
@@ -54,3 +59,4 @@ address := Address{
     City: transformer.Strings[1],
     State: transformer.Strings[2],
 }
+```
