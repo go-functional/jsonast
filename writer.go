@@ -11,6 +11,9 @@ func Write(val Value, w io.Writer) error {
 	case String:
 		_, err := fmt.Fprintf(w, `"%s"`, x.String())
 		return err
+	case Number:
+		_, err := fmt.Fprint(w, x.Float64())
+		return err
 	default:
 		return fmt.Errorf("unknown value found: %#v", x)
 	}

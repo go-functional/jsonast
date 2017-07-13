@@ -7,11 +7,18 @@ import (
 var errNotANumber = errors.New("not a number")
 
 // Number is the numeric JSON value
-type Number interface{}
+type Number interface {
+	Value
+	Float64() float64
+}
 
 type number struct {
 	Value
 	i float64
+}
+
+func (n *number) Float64() float64 {
+	return n.i
 }
 
 func convertNumber(i interface{}) (float64, error) {
@@ -34,6 +41,10 @@ func convertNumber(i interface{}) (float64, error) {
 		return float64(t), nil
 	case uint64:
 		return float64(t), nil
+	case float32:
+		return float64(t), nil
+	case float64:
+		return t, nil
 	default:
 		return -1, errNotANumber
 
