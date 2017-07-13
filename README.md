@@ -18,21 +18,26 @@ type Address struct {
     StreetName string
     City string
     State string
+    GateCode int
 }
 
 val := jsonast.Parse(`{
     "street_num":1,
     "street_name": "Microsoft Way",
     "city": "Redmond",
-    "state": "WA"
+    "state": "WA",
+    "other_info": {
+        "needs_signature": false,
+        "gate_codes": ["abcd", "efgh"]
+    }
 }`)
 
 walked := val.
     Walk().
     Field("street_num").
-    And().Field("street_name")
-    And().Field("city").
-    And().Field("state").Validate(func(v Value) bool {
+    .Field("street_name")
+    .Field("city").
+    .Field("state").Validate(func(v Value) bool {
         str, ok := v.(jsonast.String)
         if !ok {
             return false
@@ -43,20 +48,28 @@ walked := val.
             str.String() == "WA" ||
             str.String() == "OR" ||
             str.String() == "CA"
-    })
+    }).
+    Path(
+        jsonast.NewStringPathElt("other_info"),
+        jsonast.NewStringPathElt("gate_codes"),
+        jsonast.NewIntPathElt(0),
+    )
 
 if transformer.Err() != nil {
     log.Fatal(transformer.Err())
 }
 
-// transformer now has 3 jsonast.String fields in its Strings property
-// and 1 jsonast.Number field in its Numbers property.
+// walked now has the following fields in the following properties:
 //
-// you can now validate on these fields
+// - .Strings has 3 jsonast.String values (street_name, city, state)
+// - .Numbers has 2 jsonast.Number values (street_num, other_info.gate_codes[0])
+//
+// you can now create an Address from these fields
 address := Address{
-    StreetNum: transformer.Numbers[0],
-    StreetName: transformer.Strings[0],
-    City: transformer.Strings[1],
-    State: transformer.Strings[2],
+    StreetNum: walked.Numbers[0],
+    StreetName: walked.Strings[0],
+    City: walked.Strings[1],
+    State: walked.Strings[2],
+    GateCode: walked.Numbers[1],
 }
 ```
