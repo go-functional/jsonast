@@ -17,10 +17,18 @@ type number struct {
 	i float64
 }
 
+func newNumber(f float64) Number {
+	return &number{
+		Value: valueImpl{isNumber: true},
+		i:     f,
+	}
+}
+
 func (n *number) Float64() float64 {
 	return n.i
 }
 
+// TODO: remove?
 func convertNumber(i interface{}) (float64, error) {
 	switch t := i.(type) {
 	case int:
@@ -49,17 +57,4 @@ func convertNumber(i interface{}) (float64, error) {
 		return -1, errNotANumber
 
 	}
-}
-
-func isNumber(i interface{}) bool {
-	_, err := convertNumber(i)
-	return err == nil
-}
-
-func newNumber(v *value) (Number, error) {
-	flt, err := convertNumber(v.cur)
-	if err != nil {
-		return nil, err
-	}
-	return &number{Value: v, i: flt}, nil
 }

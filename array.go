@@ -32,32 +32,18 @@ type arrayImpl struct {
 	arr []Value
 }
 
-func isArray(i interface{}) bool {
-	_, ok := i.([]interface{})
-	return ok
+func newArray(elts []Value) Array {
+	return arrayImpl{
+		Value: valueImpl{isArray: true},
+		arr:   elts,
+	}
 }
 
-func newArray(v *value) (Array, error) {
-	if !isArray(v.cur) {
-		return nil, errNotAnArray
-	}
-	ifaceArr := v.cur.([]interface{})
-	convertedArr := make([]Value, len(ifaceArr))
-	for i, iface := range ifaceArr {
-		val, err := valueFromIface(iface)
-		if err != nil {
-			return nil, err
-		}
-		convertedArr[i] = val
-	}
-	return &arrayImpl{Value: v, arr: convertedArr}, nil
-}
-
-func (v *arrayImpl) Elts() []Value {
+func (v arrayImpl) Elts() []Value {
 	return v.arr
 }
 
-func (v *arrayImpl) Foreach(fn func(Value) error) error {
+func (v arrayImpl) Foreach(fn func(Value) error) error {
 	for _, val := range v.arr {
 		if err := fn(val); err != nil {
 			return err
@@ -66,7 +52,7 @@ func (v *arrayImpl) Foreach(fn func(Value) error) error {
 	return nil
 }
 
-func (v *arrayImpl) At(i int) (Value, error) {
+func (v arrayImpl) At(i int) (Value, error) {
 	if i >= len(v.arr) {
 		return nil, errIndexOutOfBounds{i: i}
 	}

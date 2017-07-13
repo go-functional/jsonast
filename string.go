@@ -8,14 +8,9 @@ import (
 var errNotAString = errors.New("not a string")
 
 // String is a string JSON value
-type String struct {
+type String interface {
 	fmt.Stringer
 	Value
-	Str string
-}
-
-func NewString(s string) String {
-	String{Str: s}
 }
 
 type stringImpl struct {
@@ -27,14 +22,9 @@ func (s stringImpl) String() string {
 	return s.str
 }
 
-func isString(i interface{}) bool {
-	_, ok := i.(string)
-	return ok
-}
-
-func newString(v *value) (String, error) {
-	if !isString(v.cur) {
-		return nil, errNotAString
+func newString(str string) String {
+	return stringImpl{
+		Value: valueImpl{isString: true},
+		str:   str,
 	}
-	return &stringImpl{Value: v, str: v.cur.(string)}, nil
 }

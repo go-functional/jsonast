@@ -7,13 +7,19 @@ import (
 // Walker is a utility for walking the JSON tree with a few function calls,
 // and transforming the JSON that was walked into a type
 type Walker struct {
-	latestValue Value
-	Nulls       []Null
-	Strings     []String
-	Numbers     []Number
-	Objects     []Object
-	Arrays      []Array
-	err         error
+	initialValue Value
+	latestValue  Value
+	Nulls        []Null
+	Strings      []String
+	Numbers      []Number
+	Objects      []Object
+	Arrays       []Array
+	err          error
+}
+
+// NewWalker creates a new Walker from the given initVal
+func NewWalker(initVal Value) Walker {
+	return Walker{initialValue: initVal}
 }
 
 // Elt picks out the ith element of the current array

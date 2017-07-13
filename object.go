@@ -2,6 +2,7 @@ package jsonast
 
 import (
 	"errors"
+	"fmt"
 )
 
 var (
@@ -12,21 +13,36 @@ var (
 type Object interface {
 	Value
 	Fields() []ObjectPair
-	ValueAt(name string) (Value, error)
+	ValueAt(key string) (Value, error)
 }
 
 // ObjectPair represents a single key-value pair in an object
 type ObjectPair struct {
-	Name  string
+	Key   string
 	Value Value
 }
 
-type object struct {
+type objectImpl struct {
 	Value
-	obj []ObjectPair
+	pairs []ObjectPair
 }
 
-func isObject(i interface{}) bool {
-	_, ok := i.(map[interface{}]interface{})
-	return ok
+func newObject(pairs []ObjectPair) Object {
+	return objectImpl{
+		Value: valueImpl{isObject: true},
+		pairs: pairs,
+	}
+}
+
+func (o objectImpl) Fields() []ObjectPair {
+	return o.pairs
+}
+
+func (o objectImpl) ValueAt(key string) (Value, error) {
+	for _, pair := range o.pairs {
+		if pair.Key == key {
+			return pair.Value, nil
+		}
+	}
+	return nil, fmt.Errorf("no such key %s", key)
 }

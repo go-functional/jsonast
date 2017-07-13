@@ -32,12 +32,11 @@ val := jsonast.Parse(`{
     }
 }`)
 
-walked := val.
-    Walk().
+walked := jsonast.NewWalker(val).
     Field("street_num").
-    .Field("street_name")
-    .Field("city").
-    .Field("state").Validate(func(v Value) bool {
+    Field("street_name").
+    Field("city").
+    Field("state").Validate(func(v Value) bool {
         str, ok := v.(jsonast.String)
         if !ok {
             return false
