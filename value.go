@@ -6,41 +6,21 @@ import (
 
 // Value is a generic node in a JSON AST. This implements fmt.Stringer
 type Value interface {
-	// Bytes returns the raw byte representation of everything at and below
-	// this value
-	// Bytes() []byte
-	// String is the equivalent of string(Bytes())
-	// String() string
+	// Walk creates a walker, which is capable of walking the JSON
+	// tree with a few function calls
+	Walk() Walker
 	// IsString returns true if the data at this node is a string
 	IsString() bool
-	// StringVal returns the string value of the data at this node, or an
-	// error if the data at this node isn't a string
-	// StringVal() (String, error)
 	// IsNumber returns true if the data at this node is numeric
 	IsNumber() bool
-	// NumberVal returns the numeric value of the data at this node, or an
-	// error is the data at this node isn't numeric
-	// NumberVal() (Number, error)
 	// IsBool returns true if the data at this node is a bool
 	IsBool() bool
-	// BoolVal returns the boolean value of the data at this node, or an error
-	// if the data at this node isn't a bool
-	// BoolVal() (Bool, error)
 	// IsObject returns true if the data at this node is an object
 	IsObject() bool
-	// ObjectVal returns the object value of the data at this node, or an error
-	// if the data at this node isn't an object
-	// ObjectVal() (Object, error)
 	// IsArray returns true if the data at this node is an array
 	IsArray() bool
-	// ArrayVal returns the array value of the data at this node, or an error
-	// if the data at this node isn't an array
-	// ArrayVal() (Array, error)
 	// IsNull returns true if the data at this node is null
 	IsNull() bool
-	// NullVal returns the null value of the data at this node, or an error
-	// if the data at this node isn't null
-	// NullVal() (Null, error)
 }
 
 type value struct {

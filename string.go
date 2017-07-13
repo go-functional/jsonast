@@ -8,9 +8,14 @@ import (
 var errNotAString = errors.New("not a string")
 
 // String is a string JSON value
-type String interface {
-	Value
+type String struct {
 	fmt.Stringer
+	Value
+	Str string
+}
+
+func NewString(s string) String {
+	String{Str: s}
 }
 
 type stringImpl struct {
