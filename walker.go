@@ -1,13 +1,14 @@
 package jsonast
 
 import (
-	"errors"
+	"fmt"
 )
 
 // Walker is a utility for walking the JSON tree with a few function calls,
 // and transforming the JSON that was walked into a type
 type Walker struct {
 	initialValue Value
+	latestPath   string
 	latestValue  Value
 	Nulls        []Null
 	Strings      []String
@@ -27,8 +28,8 @@ func (w Walker) Elt(i int) Walker {
 	if w.err != nil {
 		return w
 	}
-	if !w.curValue().IsArray() {
-		w.err = errors.New("element at %s isn't an array", w.path)
+	if !w.latestValue.IsArray() {
+		w.err = fmt.Errorf("element at %s isn't an array", w.latestPath)
 		return w
 	}
 	// TODO
@@ -42,7 +43,7 @@ func (w Walker) Path(pathElt PathElt, pathElts ...PathElt) Walker {
 		return w
 	}
 	// TODO
-	return nil
+	return Walker{}
 }
 
 // Field picks out the key s in the current dictionary
@@ -58,5 +59,9 @@ func (w Walker) Validate(fn func(Value) bool) Walker {
 	if w.err != nil {
 		return w
 	}
-	fn(values)
+	if !fn(w.latestValue) {
+		w.err = fmt.Errorf("validation on path %s failed", w.latestPath)
+		return w
+	}
+	return w
 }

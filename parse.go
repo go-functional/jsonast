@@ -15,17 +15,17 @@ type state struct {
 }
 
 func (s state) addToken(tkn token) state {
-	char := tkn.char
-	switch tkn {
-	case commaToken:
-		if s.inStr {
-			s.curStr += char
-		}
-		// TODO: if in array, not in string
-	case quoteToken:
-	case commaToken:
+	// char := tkn.char
+	// switch tkn {
+	// case commaToken:
+	// 	if s.inStr {
+	// 		s.curStr += char
+	// 	}
+	// 	// TODO: if in array, not in string
+	// case quoteToken:
+	// case commaToken:
 
-	}
+	// }
 	return s
 }
 
@@ -34,9 +34,9 @@ func (s state) addToken(tkn token) state {
 func Parse(jsonStr string) (Value, error) {
 	tokensCh := make(chan token)
 	go tokenize(jsonStr, tokensCh)
-	var st state
+	// var st state
 	for token := range tokensCh {
-		st = st.addChar(token)
+		// st = st.addChar(token)
 		log.Printf("found token %s", token)
 	}
 	return nil, nil

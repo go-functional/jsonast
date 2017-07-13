@@ -41,7 +41,7 @@ func tokenize(str string, ch chan<- token) {
 		} else if char == '}' {
 			tkn = objectEndToken
 		} else {
-			tkn = token{char: char}
+			tkn = token{char: string(char)}
 		}
 		ch <- tkn
 	}
