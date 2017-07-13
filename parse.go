@@ -1,12 +1,6 @@
 package jsonast
 
-import (
-	"log"
-)
-
 type state struct {
-	curStr string
-
 	inObj  bool
 	inArr  bool
 	inStr  bool
@@ -14,19 +8,26 @@ type state struct {
 	aggVal Value
 }
 
-func (s state) addToken(tkn token) state {
-	// char := tkn.char
-	// switch tkn {
-	// case commaToken:
-	// 	if s.inStr {
-	// 		s.curStr += char
-	// 	}
-	// 	// TODO: if in array, not in string
-	// case quoteToken:
-	// case commaToken:
+func newState() state {
+	return state{}
+}
 
-	// }
-	return s
+func (s state) addToken(tkn token) error {
+	// char := tkn.char
+	switch tkn {
+	case quoteToken:
+		if !s.inStr {
+			// start a new string
+		} else {
+			// end a string
+		}
+	}
+	return nil
+}
+
+func (s state) value() Value {
+	// TODO
+	return nil
 }
 
 // Parse parses jsonStr from JSON to a Value. Returns nil and an appropriate
@@ -34,10 +35,11 @@ func (s state) addToken(tkn token) state {
 func Parse(jsonStr string) (Value, error) {
 	tokensCh := make(chan token)
 	go tokenize(jsonStr, tokensCh)
-	// var st state
+	st := newState()
 	for token := range tokensCh {
-		// st = st.addChar(token)
-		log.Printf("found token %s", token)
+		if err := st.addToken(token); err != nil {
+			return nil, err
+		}
 	}
-	return nil, nil
+	return st.value(), nil
 }
